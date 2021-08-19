@@ -13,8 +13,9 @@ public class CameraMove : MonoBehaviour
     private float maxCameraSize;
 
     // Соотношение сторон экрана
-    private float screenAspect;
+    [SerializeField] private float screenAspect;
 
+    // Вектор для перемещения
     private Vector3 startPos;
     
     // Границы карты
@@ -29,7 +30,8 @@ public class CameraMove : MonoBehaviour
     void Start()
     {
         cam=GetComponent<Camera>();
-        screenAspect = Screen.width / Screen.height;
+
+        screenAspect = (float)Screen.width/Screen.height;
 
         // Границы камеры
         vertCamBound = cam.orthographicSize;
@@ -54,6 +56,8 @@ public class CameraMove : MonoBehaviour
         MoveHandle();
     }
 
+    // Изменение зума камеры
+    // Если фактический Aspect экрана не меняется в Runtime (что логично), то всё работает корректно
     private void SizeHandle()
     {
         if (isMovable)
@@ -69,18 +73,19 @@ public class CameraMove : MonoBehaviour
 
                 // Вычисление новых границ камеры
                 vertCamBound = cam.orthographicSize;
-                horCamBound = cam.orthographicSize * Screen.width / Screen.height;
+                horCamBound = cam.orthographicSize * screenAspect;
                 ClampCamera();
             }
         }
     }
 
+    // Перемещение камеры
+    // Если фактический Aspect экрана не меняется в Runtime (что логично), то всё работает корректно
     private void MoveHandle()
     {
         if (isMovable)
         {
             float deltaX, deltaY, targetX, targetY;
-            
 
             if(Input.GetMouseButtonDown(0)) startPos=cam.ScreenToWorldPoint(Input.mousePosition);
         

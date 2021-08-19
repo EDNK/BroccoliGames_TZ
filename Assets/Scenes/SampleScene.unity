@@ -461,6 +461,7 @@ MonoBehaviour:
   vertCamBound: 0
   horCamBound: 0
   minCameraSize: 2
+  screenAspect: 0
 --- !u!1 &1097190917
 GameObject:
   m_ObjectHideFlags: 0
