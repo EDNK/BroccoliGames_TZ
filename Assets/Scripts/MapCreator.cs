@@ -57,7 +57,7 @@ public class MapCreator : MonoBehaviour
         }
     }
 
-    // Метод возвращает самые координаты левого верхнего и правого нижнего углов фона
+    // Метод отдаёт координаты левого верхнего и правого нижнего углов фона
     public static void GetBounds(out float minX, out float maxX, out float minY, out float maxY)
     {
         minX=leftX;
@@ -77,7 +77,7 @@ public class MapCreator : MonoBehaviour
         {
             tmp=Mathf.Sqrt(Mathf.Pow(pos.x-item.X,2)+Mathf.Pow(pos.y-item.Y,2));
             
-            if ( tmp<=maxDistance) 
+            if (tmp<=maxDistance) 
             {
                 maxDistance=tmp;
                 result=item.Id;
