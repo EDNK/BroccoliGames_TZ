@@ -4,29 +4,42 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
+    // Камера и половины длины и ширины камеры в юнитах
     private Camera cam;
-    private float vertCamBound, horCamBound;
+    [SerializeField] private float vertCamBound, horCamBound;
     
+    // Поля-ограничения размера камеры. min задаётся в инспекторе, max высчитывается автоматически
     [SerializeField] private float minCameraSize;
+    private float maxCameraSize;
 
+    // Соотношение сторон экрана
+    private float screenAspect;
+
+    private Vector3 startPos;
+    
+    // Границы карты
     private float leftX, rightX, topY, bottomY;
-    private float deltaX, deltaY, targetX, targetY;
-    Vector3 startPos;
 
+    // Вектор от центра камеры к левому верхнему углу для нахождения нужного спрайта
     private Vector2 toLeftCorner;
 
+    // Разрешает/запрещает изменение позиции/зума камеры
     private bool isMovable=true;
 
     void Start()
     {
         cam=GetComponent<Camera>();
+        screenAspect = Screen.width / Screen.height;
 
         // Границы камеры
         vertCamBound = cam.orthographicSize;
-        horCamBound = cam.orthographicSize * Screen.width / Screen.height ;
+        horCamBound = cam.orthographicSize * screenAspect;
 
         // Границы карты
         MapCreator.GetBounds(out leftX, out rightX, out bottomY, out topY);
+
+        // Определение максимального размера камеры
+        maxCameraSize=Mathf.Min((topY-bottomY)/2,(rightX-leftX)/(2*screenAspect));
 
         // Перемещение камеры в центр карты
         transform.position=new Vector3((leftX+rightX)/2,(topY+bottomY)/2, -10f);
@@ -37,8 +50,37 @@ public class CameraMove : MonoBehaviour
 
     void Update()
     {
+        SizeHandle();
+        MoveHandle();
+    }
+
+    private void SizeHandle()
+    {
         if (isMovable)
         {
+            float mw = Input.GetAxis("Mouse ScrollWheel");
+            if (mw!=0) 
+            {
+                // Применение зума
+                cam.orthographicSize-=mw;
+
+                //Ограничение зума, чтобы камера не выпирала за границы карты
+                cam.orthographicSize=Mathf.Clamp(cam.orthographicSize,minCameraSize,maxCameraSize);
+
+                // Вычисление новых границ камеры
+                vertCamBound = cam.orthographicSize;
+                horCamBound = cam.orthographicSize * Screen.width / Screen.height;
+                ClampCamera();
+            }
+        }
+    }
+
+    private void MoveHandle()
+    {
+        if (isMovable)
+        {
+            float deltaX, deltaY, targetX, targetY;
+            
 
             if(Input.GetMouseButtonDown(0)) startPos=cam.ScreenToWorldPoint(Input.mousePosition);
         
@@ -48,15 +90,28 @@ public class CameraMove : MonoBehaviour
                 deltaX=cam.ScreenToWorldPoint(Input.mousePosition).x-startPos.x;
                 deltaY=cam.ScreenToWorldPoint(Input.mousePosition).y-startPos.y;
 
-                // Ограничение камеры в пределах карты. Если весь фон прямоугольный и непрерывный, то работает корректно.
-                // При изменении размера камеры в PlayMode метод работает со старыми значениями камеры, т.е. не происходит пересчёт для новой.
-                targetX=Mathf.Clamp(transform.position.x-deltaX,leftX+horCamBound,rightX-horCamBound);
-                targetY=Mathf.Clamp(transform.position.y-deltaY,bottomY+vertCamBound,topY-vertCamBound);
-            
+                targetX=transform.position.x-deltaX;
+                targetY=transform.position.y-deltaY;
+
                 // Перемещение
                 transform.position=new Vector3(targetX,targetY,-10f);
+
+                ClampCamera();
             }
         }
+    }
+
+    // Метод ограничивает камеру при изменении размера/позиции, пересчитывает вектор к левому верхнему углу
+    private void ClampCamera()
+    {
+        float targetX, targetY;
+
+        targetX=Mathf.Clamp(transform.position.x,leftX+horCamBound,rightX-horCamBound);
+        targetY=Mathf.Clamp(transform.position.y,bottomY+vertCamBound,topY-vertCamBound);
+        
+        transform.position=new Vector3(targetX,targetY,-10f);
+
+        toLeftCorner=new Vector2(-horCamBound,vertCamBound);
     }
 
     // Смена режима для камеры (разрешает и запрещает перемещение)
@@ -66,7 +121,6 @@ public class CameraMove : MonoBehaviour
     }
 
     // Возвращает имя ближайшего спрайта к левому правому углу камеры
-    // При изменении размера камеры в PlayMode метод работает со старыми значениями камеры, т.е. не происходит пересчёт для новой.
     public string LeftTopCornerSpriteName()
     {
         return MapCreator.GetNearestSpriteName((Vector2)transform.position+toLeftCorner);

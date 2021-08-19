@@ -409,8 +409,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
-    height: 1
+    width: 2160
+    height: 1080
   near clip plane: 0.3
   far clip plane: 20
   field of view: 60
@@ -458,6 +458,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84acc22771ca48142b6a84bc8487ed64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  vertCamBound: 0
+  horCamBound: 0
+  minCameraSize: 2
 --- !u!1 &1097190917
 GameObject:
   m_ObjectHideFlags: 0
