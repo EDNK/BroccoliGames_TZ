@@ -6,14 +6,14 @@ public class CameraMove : MonoBehaviour
 {
     // Камера и половины длины и ширины камеры в юнитах
     private Camera cam;
-    [SerializeField] private float vertCamBound, horCamBound;
+    private float vertCamBound, horCamBound;
     
     // Поля-ограничения размера камеры. min задаётся в инспекторе, max высчитывается автоматически
     [SerializeField] private float minCameraSize;
     private float maxCameraSize;
 
     // Соотношение сторон экрана
-    [SerializeField] private float screenAspect;
+    private float screenAspect;
 
     // Вектор для перемещения
     private Vector3 startPos;
