@@ -46,11 +46,11 @@ public class MapCreator : MonoBehaviour
         // Цикл по элементам массива, позиционирование спрайтов и нахождение крайних точек фона
         foreach (var item in myMapPartList.List)
         {
-            if (item.X+item.Width/2>rightX||rightX==null) rightX=item.X+item.Width/2;
-            else if (item.X-item.Width/2<leftX||leftX==null) leftX=item.X-item.Width/2;
+            if (item.X+item.Width/2>rightX||rightX.Equals(null)) rightX=item.X+item.Width/2;
+            else if (item.X-item.Width/2<leftX||leftX.Equals(null)) leftX=item.X-item.Width/2;
 
-            if (item.Y+item.Height/2>topY||topY==null) topY=item.Y+item.Height/2;
-            else if (item.Y-item.Height/2<bottomY||bottomY==null) bottomY=item.Y-item.Height/2;
+            if (item.Y+item.Height/2>topY||topY.Equals(null)) topY=item.Y+item.Height/2;
+            else if (item.Y-item.Height/2<bottomY||bottomY.Equals(null)) bottomY=item.Y-item.Height/2;
             
             var tmp = Instantiate(SpritePrefab, new Vector3(item.X, item.Y, 0f), Quaternion.identity);
             tmp.GetComponent<SpriteRenderer>().sprite=spriteDict[item.Id];

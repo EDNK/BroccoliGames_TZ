@@ -52,16 +52,17 @@ public class CameraMove : MonoBehaviour
 
     void Update()
     {
+        if(isMovable)
+        {
         SizeHandle();
         MoveHandle();
+        }
     }
 
     // Изменение зума камеры
     // Если фактический Aspect экрана не меняется в Runtime (что логично), то всё работает корректно
     private void SizeHandle()
     {
-        if (isMovable)
-        {
             float mw = Input.GetAxis("Mouse ScrollWheel");
             if (mw!=0) 
             {
@@ -76,15 +77,12 @@ public class CameraMove : MonoBehaviour
                 horCamBound = cam.orthographicSize * screenAspect;
                 ClampCamera();
             }
-        }
     }
 
     // Перемещение камеры
     // Если фактический Aspect экрана не меняется в Runtime (что логично), то всё работает корректно
     private void MoveHandle()
     {
-        if (isMovable)
-        {
             float deltaX, deltaY, targetX, targetY;
 
             if(Input.GetMouseButtonDown(0)) startPos=cam.ScreenToWorldPoint(Input.mousePosition);
@@ -103,7 +101,6 @@ public class CameraMove : MonoBehaviour
 
                 ClampCamera();
             }
-        }
     }
 
     // Метод ограничивает камеру при изменении размера/позиции, пересчитывает вектор к левому верхнему углу
